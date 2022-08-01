@@ -1,0 +1,67 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: go-app
+  namespace: test
+  labels:
+    app: go-app
+  
+spec:
+  selector:
+    matchLabels:
+      app: go-app
+  template:
+    metadata:
+      labels:
+        app: go-app
+    spec:
+      initContainers:
+      - name: delay
+        image: busybox
+        command: ['sleep', '30']
+
+      containers:
+        - name: go-app
+          image: MY_NEW_IMAGE
+          imagePullPolicy: IfNotPresent
+  
+
+          ports:
+            - containerPort: 8080
+          
+          livenessProbe:
+            httpGet:
+              path: /
+              port: 8080
+            initialDelaySeconds: 15
+            periodSeconds: 10
+
+          readinessProbe:
+            httpGet:
+              path: /
+              port: 8080
+            initialDelaySeconds: 15
+            periodSeconds: 10
+
+
+          env:
+            - name: PORT
+              value: "8080"
+          lifecycle:
+            preStop:
+              exec:
+                command: ["/bin/sh","-c","echo PRE STOP!"]
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: go-app-service
+  namespace: test
+spec:
+  selector:
+    app: go-app
+  ports:
+  - name: go-app-port
+    protocol: TCP
+    port: 8080
+    targetPort: 8080                

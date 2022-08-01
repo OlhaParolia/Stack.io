@@ -1,0 +1,25 @@
+1. Create main.tf file with next content:
+
+terraform {
+  required_providers {
+    kubernetes = {
+      source = "hashicorp/kubernetes"
+      version = "2.12.1"
+    }
+  }
+}
+
+
+provider "kubernetes" {
+  config_path    = "/home/olha/.kube/config"
+  config_context = "minikube"
+  experiments {
+      manifest_resource = true
+  }
+
+}
+
+2. Run command `terraform init`
+2. Install tfk8s - https://github.com/jrhouston/tfk8s
+3. Extend main.tf file by next command - `cat ../kubernetes/app.yaml | tfk8s >> main.tf`
+4. Run command `terraform apply`

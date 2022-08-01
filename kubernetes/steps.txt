@@ -1,0 +1,8 @@
+Executed steps to achive the result
+
+1. cd ../dockerize
+2. eval $(minikube docker-env)
+3. minikube image build -t go-docker .
+4. cd ../kubernetes
+5. kubectl apply -f namespace.yaml 
+6. kubectl apply -f app.yaml 
